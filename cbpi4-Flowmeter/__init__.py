@@ -80,7 +80,7 @@ class FlowMeterData():
         # calculate the instantaneous speed
         if self.enabled is True and self.clickDelta < 1000:
             self.hertz = FlowMeterData.MS_IN_A_SECOND / self.clickDelta
-            self.flow = self.hertz / (FlowMeterData.SECONDS_IN_A_MINUTE * hertzProp)  # In Liters per second
+            self.flow = (self.hertz + 3) / (FlowMeterData.SECONDS_IN_A_MINUTE * hertzProp)  # In Liters per second
             instPour = self.flow * (self.clickDelta / FlowMeterData.MS_IN_A_SECOND)  
             self.pour += instPour
         # Update the last click
@@ -93,7 +93,7 @@ class FlowMeterData():
 
 @parameters([Property.Select(label="GPIO", options=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27],description="GPIO that is used by the Flowsensor"),
             Property.Select(label="Display", options=["Total volume", "Flow, unit/s"],description="Defines if total volume or volume flow is displayed"),
-            Property.Number(label="Hertz", configurable=True, description="Here you can adjust the freequency for the flowmeter [Hertz, default is 7.5]. With this value you can calibrate the sensor.")])
+            Property.Number(label="Hertz", configurable=True, description="Here you can adjust the freequency for the flowmeter [Hertz, default is 11]. With this value you can calibrate the sensor.")])
 
 class FlowSensor(CBPiSensor):
     
@@ -103,7 +103,7 @@ class FlowSensor(CBPiSensor):
         self.fms = dict()
         self.gpio=self.props.get("GPIO",0)
         self.sensorShow=self.props.get("Display","Total Volume")
-        self.hertzProp=self.props.get("Hertz", 7.5)
+        self.hertzProp=self.props.get("Hertz", 11)
 
         try:
             GPIO.setup(int(self.gpio),GPIO.IN, pull_up_down = GPIO.PUD_UP)
